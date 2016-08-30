@@ -1,3 +1,7 @@
+.hidden {
+  display: none;
+}
+
 html {
   height: 100%;
 }
@@ -55,12 +59,13 @@ li img {
   border: 5px solid rgb(95,158,160);
 }
 
-#centerblock {
+.centerblock {
   border-radius: 10px;
   width: 1260px;
   margin: 10px auto;
   border: 1px solid white;
   background-color: #66e0ff;
+  display: block;
 }
 
 header {
@@ -85,4 +90,22 @@ hr {
   background-color: black;
   border: none;
   width: 80%;
+}
+
+.charts {
+  max-width: calc(100% - 200px);
+  max-height: 500px;
+  display: block;
+  background-color: white;
+  margin: 10px auto;
+}
+
+button {
+  font-family: "Montserrat", Arial;
+  font-size: 24pt;
+}
+
+.statbuttons {
+  margin: 10px auto;
+  text-align: center;
 }

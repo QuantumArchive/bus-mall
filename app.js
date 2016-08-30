@@ -5,9 +5,14 @@ var imageDirStr = [ 'bag.jpg', 'banana.jpg', 'bathroom.jpg', 'boots.jpg', 'break
                     'pen.jpg', 'pet-sweep.jpg', 'scissors.jpg', 'shark.jpg', 'sweep.png',
                     'tauntaun.jpg', 'unicorn.jpg', 'usb.gif', 'water-can.jpg', 'wine-glass.jpg'];
 var indexArray = [];
+var imageNameArray = [];
 var indexObjectCreate = [];
 var storeObjectArray = [];
+var chartObjectArray = [];
+var clickStats = Array(imageDirStr.length - 1).fill(0);
+var viewStats = Array(imageDirStr.length - 1).fill(0);
 var totalClicks = 0;
+var myDictionary = {};
 
 function ImageObject(name,path) {
   this.name = name;
@@ -33,6 +38,8 @@ function initializeObjectsIndex() {
     imageName = imageDirStr[i].split('.')[0];
     new ImageObject(imageName,pathFolder + imageDirStr[i]);
     indexArray.push(i);
+    imageNameArray.push(imageName);
+    myDictionary[pathFolder + imageDirStr[i]] = 0;
   };
 }
 
@@ -64,11 +71,14 @@ function calculateViews(objectIndexedArrayValues) {
   //and increment their views
   for (var i = 0; i < objectIndexedArrayValues.length; i++) {
     storeObjectArray[objectIndexedArrayValues[i]].incrementViews();
+    viewStats[objectIndexedArrayValues[i]] += 1;
   };
 };
 
 function calculateClicks(index) {
   storeObjectArray[index].incrementClicks();
+  clickStats[index] += 1;
+  totalClicks += 1;
 };
 
 function drawImage(array) {
@@ -98,17 +108,17 @@ function restoreIndexArray (oldIndexArray) {
 function checkClicksTotal(value) {
   //stop script if there are 25 clicks total
   var elMsg = document.getElementById('feedback');
-  if (value === 25) {
+  if (value >= 25) {
+    //imageList.removeEventListener('click', clickHandler, false);
+    elMsg.textContent = '25 Clicks reached, that\'s all folks! :)';
     imageList.removeEventListener('click', clickHandler, false);
-    elMsg.textContent = '25 Clicks reached, survey ending :)';
     return true;
   };
   return false;
 };
 
 function generateClickViewStats() {
-  var clickStats = Array(storeObjectArray.length - 1);
-  var viewStats = Array(storeObjectArray.length - 1);
+  //for debugging purposes
   for (var i = 0; i < storeObjectArray.length; i++) {
     clickStats[i] = storeObjectArray[i].totalClicks;
     viewStats[i] = storeObjectArray[i].totalViews;
@@ -119,24 +129,95 @@ function generateClickViewStats() {
   console.log('viewStats total:', viewStats.reduce(function(a, b) {return a + b; }, 0));
 };
 
+function barChartDraw(domElement, array, name) {
+  var newLabel = '# of ' + name;
+  var chartElement = new Chart(domElement, {
+    type: 'bar',
+    data: {
+      labels: imageNameArray,
+      datasets: [{
+        label: newLabel,
+        data: array,
+        borderWidth: 1,
+      }],
+    },
+    options: {
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero: true,
+          }
+        }]
+      }
+    }
+  });
+  chartObjectArray.push(chartElement);
+};
+
+function drawCharts() {
+  //draws charts onto html page
+  var clickElement = document.getElementById('click_stats');
+  var viewElement = document.getElementById('view_stats');
+  if (chartObjectArray.length === 0) {
+    barChartDraw(clickElement, clickStats, 'Clicks');
+    barChartDraw(viewElement, viewStats, 'Views');
+  } else {
+    chartObjectArray[0].data.datasets[0].data = clickStats;
+    chartObjectArray[0].update();
+    chartObjectArray[1].data.datasets[0].data = viewStats;
+    chartObjectArray[1].update();
+  };
+};
+
+function hideCharts() {
+  var divContainer = document.getElementById('stats');
+  var statButton = document.getElementById('viewstats');
+  var hideButton = document.getElementById('hidestats');
+  divContainer.setAttribute('class', 'hidden');
+  statButton.setAttribute('class', '');
+  hideButton.setAttribute('class', 'hidden');
+};
+
+function showCharts() {
+  var divContainer = document.getElementById('stats');
+  var statButton = document.getElementById('viewstats');
+  var hideButton = document.getElementById('hidestats');
+  divContainer.setAttribute('class', 'centerblock');
+  statButton.setAttribute('class', 'hidden');
+  hideButton.setAttribute('class', '');
+};
+
+function renderButton() {
+  var statButton = document.getElementById('viewstats');
+  var hideButton = document.getElementById('hidestats');
+  statButton.setAttribute('class', '');
+  statButton.addEventListener('click', showCharts, false);
+  hideButton.addEventListener('click', hideCharts, false);
+};
+
 function clickHandler(event) {
   //get index value from image that was clicked and pass to calculateClicks
   //if total clicks reaches 25, stop the script
+  var src = event.target.getAttribute('src');
+  //console.log(src);
+  myDictionary[src] += 1;
   var index = Number(event.target.getAttribute('index'));
   var newIndexObjectCreate;
-  totalClicks += 1;
   calculateClicks(index);
-  console.log(totalClicks);
-  if (!checkClicksTotal(totalClicks)) {
+  //console.log(totalClicks);
+  if (checkClicksTotal(totalClicks)) {
+    drawCharts();
+    renderButton();
+  } else {
     imageList.textContent = '';
     newIndexObjectCreate = randomNumbArray((imageDirStr.length - 1), 0, 3);
     calculateViews(newIndexObjectCreate);
     drawImage(newIndexObjectCreate);
     restoreIndexArray(indexObjectCreate);
     indexObjectCreate = newIndexObjectCreate;
-  } else {
-    generateClickViewStats();
-  };
+  }
+  generateClickViewStats();
+  //console.log(myDictionary);
 };
 
 //main
