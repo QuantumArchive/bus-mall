@@ -7,3 +7,5 @@ As a constituent of the study, I want an interface that is simple and appealing 
 As a member of the market analysis team, I want to store all click data and views so statistical analysis may be performed later.
 
 As a developer, I want to keep the images presented in uniform manner that can be easily viewed on different screen resolutions/sizes.
+
+As a developer, I want to store an array of indexes that allow me to quickly update the total clicks for a given object and total views.

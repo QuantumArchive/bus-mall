@@ -8,15 +8,33 @@ body {
   height: 100%;
 }
 
+#mainbackground {
+  background-color: #66cccc;
+  background-image: -moz-linear-gradient(#336666, #66cccc);
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#66cccc), to(#336666));
+  background-image: -o-linear-gradient(#336666, #66cccc);
+  background-attachment: fixed;
+  background-position: top left;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: static;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+}
+
 h1 {
   text-align: center;
   font-family: "Baloo Paaji", sans-serif;
+  margin-bottom: 0;
 }
 
 h2 {
-  text-align: justify;
+  text-align: center;
   font-family: "Lobster", Arial;
-  margin: 20px;
+  margin: 0 20px 20px 20px;
 }
 
 ul {
@@ -41,14 +59,19 @@ li img {
   border-radius: 10px;
   width: 1260px;
   margin: 10px auto;
-  border: 1px solid black;
+  border: 1px solid white;
+  background-color: #66e0ff;
 }
 
 header {
   border-radius: 10px;
   width: 1260px;
   margin: 10px auto;
-  border: 1px solid black;
+  border: 1px solid white;
+  background-color: #66e0ff;
+  background-image: -moz-linear-gradient(#ffffff, #66e0ff);
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#ffffff), to(#66e0ff));
+  background-image: -o-linear-gradient(#ffffff, #66e0ff);
 }
 
 #feedback {

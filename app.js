@@ -41,6 +41,9 @@ function randomNumberGen(max, min) {
 };
 
 function randomNumbArray(max, min, arraySize) {
+  //will generate an array of size arraySize with non-repeating random numbers
+  //each number corresponds to a given index for a given object because the storeObjectArray and imageDirStr arrays don't change
+  //when number is grabbed from indexArray, the value is replaced with -1 to indicate to the algorithm to look for another index
   var j = 0;
   var indexListValues = [];
   var randomIndex = randomNumberGen(max, min);
@@ -57,7 +60,8 @@ function randomNumbArray(max, min, arraySize) {
 };
 
 function calculateViews(objectIndexedArrayValues) {
-  //pass array with index numbers for objects that were selected for view
+  //pass array with index numbers for objects that were selected for viewing on page
+  //and increment their views
   for (var i = 0; i < objectIndexedArrayValues.length; i++) {
     storeObjectArray[objectIndexedArrayValues[i]].incrementViews();
   };
@@ -68,6 +72,8 @@ function calculateClicks(index) {
 };
 
 function drawImage(array) {
+  //pass an array with index numbers to call that object in the storeObjectArray to call it's path
+  //then set a name to the image as well as an index number
   var imageList = document.getElementById('images');
   var img;
   var li;
@@ -79,16 +85,18 @@ function drawImage(array) {
     img.setAttribute('index', array[i]);
     li.appendChild(img);
     imageList.appendChild(li);
-  }
+  };
 };
 
 function restoreIndexArray (oldIndexArray) {
+  //when done with previous index, repopulate those indexes in the indexArray
   for (var i = 0; i < oldIndexArray.length; i++) {
     indexArray[oldIndexArray[i]] = oldIndexArray[i];
   };
 };
 
 function checkClicksTotal(value) {
+  //stop script if there are 25 clicks total
   var elMsg = document.getElementById('feedback');
   if (value === 25) {
     imageList.removeEventListener('click', clickHandler, false);
@@ -98,7 +106,22 @@ function checkClicksTotal(value) {
   return false;
 };
 
+function generateClickViewStats() {
+  var clickStats = Array(storeObjectArray.length - 1);
+  var viewStats = Array(storeObjectArray.length - 1);
+  for (var i = 0; i < storeObjectArray.length; i++) {
+    clickStats[i] = storeObjectArray[i].totalClicks;
+    viewStats[i] = storeObjectArray[i].totalViews;
+  };
+  console.log('clickStats: ',clickStats);
+  console.log('clickStats total:', clickStats.reduce(function(a, b) {return a + b; }, 0));
+  console.log('viewStats: ',viewStats);
+  console.log('viewStats total:', viewStats.reduce(function(a, b) {return a + b; }, 0));
+};
+
 function clickHandler(event) {
+  //get index value from image that was clicked and pass to calculateClicks
+  //if total clicks reaches 25, stop the script
   var index = Number(event.target.getAttribute('index'));
   var newIndexObjectCreate;
   totalClicks += 1;
@@ -111,6 +134,8 @@ function clickHandler(event) {
     drawImage(newIndexObjectCreate);
     restoreIndexArray(indexObjectCreate);
     indexObjectCreate = newIndexObjectCreate;
+  } else {
+    generateClickViewStats();
   };
 };
 
