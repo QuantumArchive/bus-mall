@@ -1,0 +1,65 @@
+html {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+h1 {
+  text-align: center;
+  font-family: "Baloo Paaji", sans-serif;
+}
+
+h2 {
+  text-align: justify;
+  font-family: "Lobster", Arial;
+  margin: 20px;
+}
+
+ul {
+  padding: 0;
+}
+
+ul li {
+  display: inline-block;
+  margin: auto;
+}
+
+li img {
+  width: 400px;
+  max-height: 400px;
+  margin: 5px;
+  vertical-align: middle;
+  border-radius: 10px;
+  border: 5px solid rgb(95,158,160);
+}
+
+#centerblock {
+  border-radius: 10px;
+  width: 1260px;
+  margin: 10px auto;
+  border: 1px solid black;
+}
+
+header {
+  border-radius: 10px;
+  width: 1260px;
+  margin: 10px auto;
+  border: 1px solid black;
+}
+
+#feedback {
+  text-align: center;
+  font-family: Arial, sans-serif;
+  font-size: 20px;
+}
+
+hr {
+  height: 2px;
+  background-color: black;
+  border: none;
+  width: 80%;
+}
