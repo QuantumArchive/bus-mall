@@ -9,10 +9,12 @@ var imageNameArray = [];
 var indexObjectCreate = [];
 var storeObjectArray = [];
 var chartObjectArray = [];
-var clickStats = Array(imageDirStr.length - 1).fill(0);
-var viewStats = Array(imageDirStr.length - 1).fill(0);
+var statDictionary = {
+  clickStats : Array(imageDirStr.length).fill(0),
+  viewStats : Array(imageDirStr.length).fill(0),
+  clicksPerViewStatsArray : Array(imageDirStr.length).fill(0),
+};
 var totalClicks = 0;
-var myDictionary = {};
 
 function ImageObject(name,path) {
   this.name = name;
@@ -39,7 +41,6 @@ function initializeObjectsIndex() {
     new ImageObject(imageName,pathFolder + imageDirStr[i]);
     indexArray.push(i);
     imageNameArray.push(imageName);
-    myDictionary[pathFolder + imageDirStr[i]] = 0;
   };
 }
 
@@ -68,16 +69,18 @@ function randomNumbArray(max, min, arraySize) {
 
 function calculateViews(objectIndexedArrayValues) {
   //pass array with index numbers for objects that were selected for viewing on page
-  //and increment their views
+  //and increment their views and calculate the clicks/view of a given object
   for (var i = 0; i < objectIndexedArrayValues.length; i++) {
     storeObjectArray[objectIndexedArrayValues[i]].incrementViews();
-    viewStats[objectIndexedArrayValues[i]] += 1;
+    statDictionary.viewStats[objectIndexedArrayValues[i]] += 1;
+    statDictionary.clicksPerViewStatsArray[objectIndexedArrayValues[i]] = statDictionary.clickStats[objectIndexedArrayValues[i]] / statDictionary.viewStats[objectIndexedArrayValues[i]];
   };
 };
 
 function calculateClicks(index) {
   storeObjectArray[index].incrementClicks();
-  clickStats[index] += 1;
+  statDictionary.clickStats[index] += 1;
+  statDictionary.clicksPerViewStatsArray[index] = statDictionary.clickStats[index] / statDictionary.viewStats[index];
   totalClicks += 1;
 };
 
@@ -117,19 +120,9 @@ function checkClicksTotal(value) {
   return false;
 };
 
-function generateClickViewStats() {
-  //for debugging purposes
-  for (var i = 0; i < storeObjectArray.length; i++) {
-    clickStats[i] = storeObjectArray[i].totalClicks;
-    viewStats[i] = storeObjectArray[i].totalViews;
-  };
-  console.log('clickStats: ',clickStats);
-  console.log('clickStats total:', clickStats.reduce(function(a, b) {return a + b; }, 0));
-  console.log('viewStats: ',viewStats);
-  console.log('viewStats total:', viewStats.reduce(function(a, b) {return a + b; }, 0));
-};
-
 function barChartDraw(domElement, array, name) {
+  //create chart element and push it to chartObjectArray so the objects can be updated
+  //later if we want to update live
   var newLabel = '# of ' + name;
   var chartElement = new Chart(domElement, {
     type: 'bar',
@@ -158,18 +151,26 @@ function drawCharts() {
   //draws charts onto html page
   var clickElement = document.getElementById('click_stats');
   var viewElement = document.getElementById('view_stats');
+  var clickViewRatio = document.getElementById('click_view_stats');
+  var domElArray = [clickElement, viewElement, clickViewRatio];
+  var domElName = ['Clicks', 'Views', 'Clicks/Views'];
+  var loopCounter = 0;
   if (chartObjectArray.length === 0) {
-    barChartDraw(clickElement, clickStats, 'Clicks');
-    barChartDraw(viewElement, viewStats, 'Views');
+    for (var key in statDictionary) {
+      barChartDraw(domElArray[loopCounter], statDictionary[key], domElName[loopCounter]);
+      loopCounter += 1;
+    };
   } else {
-    chartObjectArray[0].data.datasets[0].data = clickStats;
-    chartObjectArray[0].update();
-    chartObjectArray[1].data.datasets[0].data = viewStats;
-    chartObjectArray[1].update();
+    for (var rekey in statDictionary) {
+      chartObjectArray[loopCounter].data.datasets[0].data = statDictionary[rekey];
+      chartObjectArray[loopCounter].update();
+      loopCounter += 1;
+    };
   };
 };
 
 function hideCharts() {
+  //function set on the event listener for the button click to hide charts and show the show chart button
   var divContainer = document.getElementById('stats');
   var statButton = document.getElementById('viewstats');
   var hideButton = document.getElementById('hidestats');
@@ -179,6 +180,7 @@ function hideCharts() {
 };
 
 function showCharts() {
+  //function set on the event listener for the button click to show charts and show hide chart button
   var divContainer = document.getElementById('stats');
   var statButton = document.getElementById('viewstats');
   var hideButton = document.getElementById('hidestats');
@@ -188,6 +190,7 @@ function showCharts() {
 };
 
 function renderButton() {
+  //shows stat button which can set the class of the div element holding the charts to be shown
   var statButton = document.getElementById('viewstats');
   var hideButton = document.getElementById('hidestats');
   statButton.setAttribute('class', '');
@@ -198,9 +201,6 @@ function renderButton() {
 function clickHandler(event) {
   //get index value from image that was clicked and pass to calculateClicks
   //if total clicks reaches 25, stop the script
-  var src = event.target.getAttribute('src');
-  //console.log(src);
-  myDictionary[src] += 1;
   var index = Number(event.target.getAttribute('index'));
   var newIndexObjectCreate;
   calculateClicks(index);
@@ -216,8 +216,6 @@ function clickHandler(event) {
     restoreIndexArray(indexObjectCreate);
     indexObjectCreate = newIndexObjectCreate;
   }
-  generateClickViewStats();
-  //console.log(myDictionary);
 };
 
 //main
