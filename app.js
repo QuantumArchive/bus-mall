@@ -86,6 +86,7 @@ function calculateViews(objectIndexedArrayValues) {
       statDictionary.clicksPerViewStatsArray[objectIndexedArrayValues[i]] = statDictionary.clickStats[objectIndexedArrayValues[i]] / statDictionary.viewStats[objectIndexedArrayValues[i]];
     }
   };
+  console.log(statDictionary.viewStats.reduce(function(a, b) {return a + b ;}, 0));
 };
 
 function calculateClicks(index) {
@@ -248,10 +249,11 @@ function clickHandler(event) {
     } else {
       imageList.textContent = '';
       newIndexObjectCreate = randomNumbArray((imageDirStr.length - 1), 0, 3);
-      calculateViews(newIndexObjectCreate);
-      drawImage(newIndexObjectCreate);
       restoreIndexArray(indexObjectCreate);
       indexObjectCreate = newIndexObjectCreate;
+      setSavedData();
+      calculateViews(indexObjectCreate);
+      drawImage(indexObjectCreate);
     }
   }
 };
