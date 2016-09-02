@@ -86,7 +86,6 @@ function calculateViews(objectIndexedArrayValues) {
       statDictionary.clicksPerViewStatsArray[objectIndexedArrayValues[i]] = statDictionary.clickStats[objectIndexedArrayValues[i]] / statDictionary.viewStats[objectIndexedArrayValues[i]];
     }
   };
-  console.log(statDictionary.viewStats.reduce(function(a, b) {return a + b ;}, 0));
 };
 
 function calculateClicks(index) {
@@ -176,22 +175,17 @@ function barChartDraw(domElement, array, name) {
 function drawCharts() {
   //draws charts onto html page
   var loopCounter = 0;
-  //calculateClicksPerViews();
-
   if (chartObjectArray.length === 0) {
     var clickElement = document.getElementById('click_stats');
     var viewElement = document.getElementById('view_stats');
     var clickViewRatio = document.getElementById('click_view_stats');
     var domElArray = [clickElement, viewElement, clickViewRatio];
     var domElName = ['Clicks', 'Views', 'Clicks/Views'];
-
     for (var key in statDictionary) {
       barChartDraw(domElArray[loopCounter], statDictionary[key], domElName[loopCounter]);
       loopCounter += 1;
     };
-
   } else {
-
     for (var rekey in statDictionary) {
       chartObjectArray[loopCounter].data.datasets[0].data = statDictionary[rekey];
       chartObjectArray[loopCounter].update();
@@ -262,7 +256,7 @@ function checkSavedData() {
   //check if data is saved to localStorage and if it isn't initialize all arrays needed to begin storing
   var dictStoredWebDataObjects = localStorage.getItem('webPageData');
   var savedData;
-  if (dictStoredWebDataObjects === null) {
+  if (!dictStoredWebDataObjects) {
     initializeObjectsIndex();
     indexObjectCreate = randomNumbArray((imageDirStr.length - 1), 0, 3);
   } else {
