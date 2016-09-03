@@ -256,7 +256,7 @@ function checkSavedData() {
   //check if data is saved to localStorage and if it isn't initialize all arrays needed to begin storing
   var dictStoredWebDataObjects = localStorage.getItem('webPageData');
   var savedData;
-  if (!dictStoredWebDataObjects) {
+  if (!dictStoredWebDataObjects === null) {
     initializeObjectsIndex();
     indexObjectCreate = randomNumbArray((imageDirStr.length - 1), 0, 3);
   } else {
